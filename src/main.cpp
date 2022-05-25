@@ -6,11 +6,8 @@
 #include <stdexcept>
 
 int main(){
-	
-	std::string bruh = "amogus";
-	scandium::World cock;
-	cock.generateWorldSeed(bruh);
-	std::cout << cock.getWorldSeed() << "\n";
+
+	// Test
 
 	scandium::Application app{};
 	try
