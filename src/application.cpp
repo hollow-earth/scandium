@@ -26,7 +26,11 @@ namespace scandium {
 	}
 
 	void Application::loadModels(){
-		std::vector<ScandiumModel::Vertex> vertices {{{0.0f, -0.5f}}, {{0.5f, 0.5f}}, {{-0.5f, 0.5f}}};
+		std::vector<ScandiumModel::Vertex> vertices {
+			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}}, 
+			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}}, 
+			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+		};
 		scandiumModel = std::make_unique<ScandiumModel>(engineDevice, vertices);
 	}
 
