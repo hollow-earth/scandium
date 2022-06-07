@@ -41,7 +41,9 @@ scandium_swapchain.o: $(SRC)scandium_swapchain.cpp $(SRC)scandium_swapchain.hpp
 scandium_model.o: $(SRC)scandium_model.cpp $(SRC)scandium_model.hpp
 	$(CXX) $(CFLAGS) -c $< $(LIBS)
 
-shaders: ./shaders/simple_shader.vert ./shaders/simple_shader.frag
+shaders: .PHONY
+
+.PHONY: ./shaders/simple_shader.vert ./shaders/simple_shader.frag
 	$(GLSC) ./shaders/simple_shader.vert -o ./shaders/simple_shader.vert.spv
 	$(GLSC) ./shaders/simple_shader.frag -o ./shaders/simple_shader.frag.spv
 

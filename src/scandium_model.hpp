@@ -20,11 +20,12 @@ namespace scandium{
 
 			ScandiumModel(EngineDevice &device, const std::vector<Vertex> &vertices);
 			~ScandiumModel();
-			ScandiumModel(const ScandiumModel &) = delete;
-			ScandiumModel&operator=(const ScandiumModel &) = delete;
 
-			void bind(VkCommandBuffer VkCommandBuffer);
-			void draw(VkCommandBuffer VkCommandBuffer);
+			ScandiumModel(const ScandiumModel &) = delete;
+			ScandiumModel &operator=(const ScandiumModel &) = delete;
+
+			void bind(VkCommandBuffer commandBuffer);
+			void draw(VkCommandBuffer commandBuffer);
 
 		private: 
 			void createVertexBuffers(const std::vector<Vertex> &vertices);

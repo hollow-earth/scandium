@@ -4,6 +4,8 @@
 #include "pipeline.hpp"
 #include "renderer.hpp"
 #include "scandium_swapchain.hpp"
+#include "scandium_model.hpp"
+
 #include <memory>
 #include <vector>
 
@@ -24,6 +26,7 @@ namespace scandium{
 			void run();
 			
 		private:
+			void loadModels();
 			void createPipelineLayout();
 			void createPipeline();
 			void createCommandBuffers();
@@ -35,5 +38,6 @@ namespace scandium{
 			std::unique_ptr<ScandiumPipeline> scandiumPipeline;
 			VkPipelineLayout pipelineLayout;
 			std::vector<VkCommandBuffer> commandBuffers;
+			std::unique_ptr<ScandiumModel> scandiumModel;
 	};
 }

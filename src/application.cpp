@@ -3,9 +3,10 @@
 #include <stdexcept>
 #include <array>
 
-namespace scandium{
+namespace scandium {
 
 	Application::Application(){
+		loadModels();
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
@@ -22,6 +23,11 @@ namespace scandium{
 		}
 
 		vkDeviceWaitIdle(engineDevice.device());
+	}
+
+	void Application::loadModels(){
+		std::vector<ScandiumModel::Vertex> vertices {{{0.0f, -0.5f}}, {{0.5f, 0.5f}}, {{-0.5f, 0.5f}}};
+		scandiumModel = std::make_unique<ScandiumModel>(engineDevice, vertices);
 	}
 
 	void Application::createPipelineLayout(){
@@ -80,7 +86,8 @@ namespace scandium{
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			scandiumPipeline->bind(commandBuffers[i]);
-			vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			scandiumModel->bind(commandBuffers[i]);
+			scandiumModel->draw(commandBuffers[i]);
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS){
