@@ -30,7 +30,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "mingw32-make build ; mingw32-make clean ; .\\build\\output.exe",
+            "command": "mingw32-make shaders ; mingw32-make build ; mingw32-make clean ; .\\build\\output.exe",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

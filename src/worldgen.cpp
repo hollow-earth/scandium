@@ -1,4 +1,4 @@
-#include "worldgen.h"
+#include "worldgen.hpp"
 
 #include <iostream>
 #include <string>
@@ -10,25 +10,25 @@ namespace scandium{
 	void World::generateWorldSeed(const std::string& seedInput){				// This is a pseudo hash function
 		enum DIGITS {THREE_DIGITS = 100, TWO_DIGITS = 10, ONE_DIGIT = 1};
 		std::array<int, 32> seedPreHashInt;
-		int i = 0;
 		std::string seedInputTrimmed = seedInput.substr(0, 16);
-		seedInputTrimmed.insert(seedInputTrimmed.length(), 20 - seedInputTrimmed.length(), ' ');
+		seedInputTrimmed.insert(seedInputTrimmed.length(), 16 - seedInputTrimmed.length(), ' ');
 		
+		int i = 0;
 		for (const char &c: seedInputTrimmed){
-			if (c > THREE_DIGITS && c <= 127){									// <= 127 because we only want ASCII characters
-				seedPreHashInt[i] = (int)((c % 100) / 10);						// We discard the leftmost digit
+			if (c >= THREE_DIGITS && c <= 127){									// <= 127 because we only want ASCII characters
+				seedPreHashInt[i] = static_cast<int>((c % 100) / 10);			// We discard the leftmost digit
 				seedPreHashInt[i+1] = c % 10;
 			}
-			else if (c > TWO_DIGITS){
-				seedPreHashInt[i] = (int)(c / 10);								// We add the digits to each array index
+			else if (c >= TWO_DIGITS){
+				seedPreHashInt[i] = static_cast<int>(c / 10);					// We add the digits to each array index
 				seedPreHashInt[i+1] = c % 10;
 			}
 			else if (c >= ONE_DIGIT){
 				seedPreHashInt[i] = 0;											// 0 because we have one digit
-				seedPreHashInt[i+1] = c % 10;
+				seedPreHashInt[i+1] = c;
 			}
 			else{																// Guard for illegal characters
-				seedPreHashInt[i] = 3;
+				seedPreHashInt[i] = 3;											// 3 and 8 are random numbers with no significance
 				seedPreHashInt[i+1] = 8;
 			}
 			i += 2;

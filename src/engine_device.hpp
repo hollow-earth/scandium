@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderer.h"
+#include "renderer.hpp"
 
 // Stole this code from Brendan Galea/blurrypiano, will have to be rewritten later
 
@@ -32,7 +32,7 @@ namespace scandium {
 	const bool enableValidationLayers = true;
 	#endif
 
-	EngineDevice(rendererWindow &window);
+	EngineDevice(rendererWindow &renderWindow);
 	~EngineDevice();
 
 	// Not copyable or movable

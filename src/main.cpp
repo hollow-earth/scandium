@@ -1,14 +1,11 @@
-#include "application.h"
-#include "worldgen.h"
+#include "application.hpp"
+#include "worldgen.hpp"
 
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
 int main(){
-
-	// Test
-
 	scandium::Application app{};
 	try
 	{

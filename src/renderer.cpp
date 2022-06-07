@@ -1,6 +1,7 @@
-#include "renderer.h"
-#include "application.h"
+#include "renderer.hpp"
+#include "application.hpp"
 #include <iostream>
+#include <stdexcept>
 
 namespace scandium{
 	rendererWindow::rendererWindow(int w, int h, std::string name): width{w}, height{h}, windowName{name} {
