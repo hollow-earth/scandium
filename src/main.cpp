@@ -1,4 +1,4 @@
-#include "application.hpp"
+#include "./render/application.hpp"
 #include "worldgen.hpp"
 
 #include <cstdlib>
@@ -7,12 +7,11 @@
 
 int main(){
 	scandium::Application app{};
-	try
-	{
+	try {
 		app.run();
 	}
-	catch(const std::exception& e)
-	{
+
+	catch(const std::exception& e){
 		std::cerr << e.what() << '\n';
 		return EXIT_FAILURE;
 	}

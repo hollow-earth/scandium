@@ -1,5 +1,6 @@
 #include "renderer.hpp"
 #include "application.hpp"
+
 #include <iostream>
 #include <stdexcept>
 
