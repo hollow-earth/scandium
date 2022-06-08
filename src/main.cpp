@@ -1,4 +1,4 @@
-#include "./render/application.hpp"
+#include "render/application.hpp"
 #include "worldgen.hpp"
 
 #include <cstdlib>
