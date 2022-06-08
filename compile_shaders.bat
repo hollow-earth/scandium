@@ -1,2 +1,0 @@
-call "C:\\Coding\\VulkanSDK1.3.211.0\\Bin\\glslc.exe" ./shaders/simple_shader.vert -o ./shaders/simple_shader.vert.spv
-call "C:\\Coding\\VulkanSDK1.3.211.0\\Bin\\glslc.exe" ./shaders/simple_shader.frag -o ./shaders/simple_shader.frag.spv

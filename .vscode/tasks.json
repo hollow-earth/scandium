@@ -30,7 +30,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "mingw32-make shaders ; mingw32-make build ; mingw32-make clean ; .\\build\\output.exe",
+            "command": "mingw32-make shaders ; mingw32-make build ; .\\build\\output.exe",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -43,7 +43,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "mingw32-make debug ; mingw32-make clean",
+            "command": "mingw32-make shaders; mingw32-make debug",
             "problemMatcher": [],
             "group": "build"
         },
@@ -53,7 +53,7 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "command": "./compile_shaders.bat",
+            "command": "mingw32-make shaders",
             "problemMatcher": [],
             "group": "build"
         }

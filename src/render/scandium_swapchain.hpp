@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace scandium {
 
@@ -12,10 +13,11 @@ class ScandiumSwapchain {
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
   ScandiumSwapchain(EngineDevice &deviceRef, VkExtent2D windowExtent);
+  ScandiumSwapchain(EngineDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<ScandiumSwapchain> previous);
   ~ScandiumSwapchain();
 
   ScandiumSwapchain(const ScandiumSwapchain &) = delete;
-  void operator=(const ScandiumSwapchain &) = delete;
+  ScandiumSwapchain& operator=(const ScandiumSwapchain &) = delete;
 
   VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
   VkRenderPass getRenderPass() { return renderPass; }
@@ -35,12 +37,13 @@ class ScandiumSwapchain {
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
  private:
-  void createSwapChain();
-  void createImageViews();
-  void createDepthResources();
-  void createRenderPass();
-  void createFramebuffers();
-  void createSyncObjects();
+ 	void init();
+	void createSwapChain();
+	void createImageViews();
+	void createDepthResources();
+	void createRenderPass();
+	void createFramebuffers();
+	void createSyncObjects();
 
   // Helper functions
   VkSurfaceFormatKHR chooseSwapSurfaceFormat(
@@ -65,6 +68,7 @@ class ScandiumSwapchain {
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;
+  std::shared_ptr<ScandiumSwapchain> oldSwapChain;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;

@@ -46,7 +46,7 @@ void DestroyDebugUtilsMessengerEXT(
 }
 
 // class member functions
-EngineDevice::EngineDevice(rendererWindow &window) : window{window} {
+EngineDevice::EngineDevice(RendererWindow &window) : window{window} {
   createInstance();
   setupDebugMessenger();
   createSurface();

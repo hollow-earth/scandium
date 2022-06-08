@@ -30,11 +30,14 @@ namespace scandium{
 			void createPipelineLayout();
 			void createPipeline();
 			void createCommandBuffers();
+			void freeCommandBuffers();
 			void drawFrame();
+			void recreateSwapChain();
+			void recordCommandBuffer(int imageIndex);
 
-			rendererWindow renderWindow{WIDTH, HEIGHT, "Bruh"};
+			RendererWindow renderWindow{WIDTH, HEIGHT, "Bruh"};
 			EngineDevice engineDevice{renderWindow};
-			ScandiumSwapchain scandiumSwapchain{engineDevice, renderWindow.getExtent()};
+			std::unique_ptr<ScandiumSwapchain> scandiumSwapchain;
 			std::unique_ptr<ScandiumPipeline> scandiumPipeline;
 			VkPipelineLayout pipelineLayout;
 			std::vector<VkCommandBuffer> commandBuffers;

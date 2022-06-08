@@ -11,14 +11,15 @@
 
 namespace scandium {
 
-ScandiumSwapchain::ScandiumSwapchain(EngineDevice &deviceRef, VkExtent2D extent)
-    : device{deviceRef}, windowExtent{extent} {
-  createSwapChain();
-  createImageViews();
-  createRenderPass();
-  createDepthResources();
-  createFramebuffers();
-  createSyncObjects();
+ScandiumSwapchain::ScandiumSwapchain(EngineDevice &deviceRef, VkExtent2D extent): 
+		device{deviceRef}, windowExtent{extent} {
+	init();
+}
+
+ScandiumSwapchain::ScandiumSwapchain(EngineDevice &deviceRef, VkExtent2D extent, 
+		std::shared_ptr<ScandiumSwapchain> previous): device{deviceRef}, windowExtent{extent}, oldSwapChain{previous} {
+	init();
+	oldSwapChain = nullptr;
 }
 
 ScandiumSwapchain::~ScandiumSwapchain() {
@@ -50,6 +51,15 @@ ScandiumSwapchain::~ScandiumSwapchain() {
     vkDestroySemaphore(device.device(), imageAvailableSemaphores[i], nullptr);
     vkDestroyFence(device.device(), inFlightFences[i], nullptr);
   }
+}
+
+void ScandiumSwapchain::init(){
+	createSwapChain();
+	createImageViews();
+	createRenderPass();
+	createDepthResources();
+	createFramebuffers();
+	createSyncObjects();
 }
 
 VkResult ScandiumSwapchain::acquireNextImage(uint32_t *imageIndex) {
@@ -162,7 +172,7 @@ void ScandiumSwapchain::createSwapChain() {
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
 
-  createInfo.oldSwapchain = VK_NULL_HANDLE;
+  createInfo.oldSwapchain = (oldSwapChain == nullptr) ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
     throw std::runtime_error("failed to create swap chain!");
@@ -385,6 +395,7 @@ VkPresentModeKHR ScandiumSwapchain::chooseSwapPresentMode(const std::vector<VkPr
      		return availablePresentMode;
    		}
  	}*/
+	//TODO check if we can include other modes using above comments
   	std::cout << "Present mode: V-Sync" << std::endl;
   	return VK_PRESENT_MODE_FIFO_KHR;
 }

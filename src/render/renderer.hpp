@@ -5,21 +5,25 @@
 #include <string>
 
 namespace scandium{
-	class rendererWindow{
+	class RendererWindow{
 		public:
-			rendererWindow(int w, int h, std::string name);
-			~rendererWindow();
+			RendererWindow(int w, int h, std::string name);
+			~RendererWindow();
 
-			rendererWindow(const rendererWindow &) = delete;					// what is this???
-			rendererWindow &operator=(const rendererWindow &) = delete;			// no fucking clue what this does
+			RendererWindow(const RendererWindow &) = delete;					// what is this???
+			RendererWindow &operator=(const RendererWindow &) = delete;			// no fucking clue what this does
+			bool wasWindowResized() {return framebufferResized; }
+			void resetWindowResizedFlag() {framebufferResized = false; }
 
 			bool shouldClose() { return glfwWindowShouldClose(window); }
 			VkExtent2D getExtent() {return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
 			void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
 		private:
-			const int width;
-			const int height;
+			static void framebufferResizecallback(GLFWwindow *window, int width, int height);
+			int width;
+			int height;
+			bool framebufferResized = false;
 			
 			std::string windowName;
 			GLFWwindow* window;

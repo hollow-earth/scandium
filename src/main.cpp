@@ -1,5 +1,4 @@
 #include "render/application.hpp"
-#include "worldgen.hpp"
 
 #include <cstdlib>
 #include <iostream>

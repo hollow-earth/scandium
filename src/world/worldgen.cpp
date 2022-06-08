@@ -6,7 +6,6 @@
 
 
 namespace scandium{
-	
 	void World::generateWorldSeed(const std::string& seedInput){				// This is a pseudo hash function
 		enum DIGITS {THREE_DIGITS = 100, TWO_DIGITS = 10, ONE_DIGIT = 1};
 		std::array<int, 32> seedPreHashInt;

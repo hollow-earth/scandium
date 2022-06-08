@@ -31,5 +31,10 @@ all: $(OBJECTS)
 $(OBJECTS): src/%.o : src/%.cpp
 	$(CXX) $(CFLAGS) -c $< $(LIBS) -o $(OBJ_DIR)/$(@F)
 
-hi:
-	$(info $(EXPECTED_OBJECTS))
+shaders: .PHONY
+.PHONY: ./shaders/simple_shader.vert ./shaders/simple_shader.frag
+	$(GLSC) ./shaders/simple_shader.vert -o ./shaders/simple_shader.vert.spv
+	$(GLSC) ./shaders/simple_shader.frag -o ./shaders/simple_shader.frag.spv
+
+#clean:
+#	del /F *.o
