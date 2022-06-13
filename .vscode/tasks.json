@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run makefile (Windows)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "mingw32-make build ; mingw32-make clean",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Run build (Windows)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": ".\\build\\output.exe",
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+		{
+            "label": "Run makefile and run build (Windows)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "mingw32-make shaders ; mingw32-make build ; .\\build\\output.exe",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run debug for (Windows)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "mingw32-make shaders; mingw32-make debug",
+            "problemMatcher": [],
+            "group": "build"
+        },
+		{
+            "label": "Compile shaders (Windows)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "mingw32-make shaders",
+            "problemMatcher": [],
+            "group": "build"
+        }
+    ]
+}
