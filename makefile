@@ -42,5 +42,5 @@ shaders: .PHONY
 	$(GLSC) ./shaders/simple_shader.vert -o ./shaders/simple_shader.vert.spv
 	$(GLSC) ./shaders/simple_shader.frag -o ./shaders/simple_shader.frag.spv
 
-#clean:
-#	del /F ./build/obj/*.o
+clean:
+	del .\build\obj\*.o
