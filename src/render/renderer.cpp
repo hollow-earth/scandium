@@ -1,40 +1,140 @@
 #include "renderer.hpp"
-#include "application.hpp"
 
-#include <iostream>
+#include <cassert>
+#include <array>
 #include <stdexcept>
 
-namespace scandium{
-	RendererWindow::RendererWindow(int w, int h, std::string name): width{w}, height{h}, windowName{name} {
-		initWindow();
+namespace scandium {
+
+	Renderer::Renderer(Window &window, EngineDevice &device) : renderWindow{window}, engineDevice{device} {
+		recreateSwapChain();
+		createCommandBuffers();
 	}
 
-	RendererWindow::~RendererWindow(){
-		glfwDestroyWindow(window);
-		glfwTerminate();
-		std::cout << "Window destroyed";
-	}
+	Renderer::~Renderer(){ freeCommandBuffers(); }
 
-	void RendererWindow::createWindowSurface(VkInstance instance, VkSurfaceKHR *surface){
-		if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS){
-			throw std::runtime_error("Failed to create window surface");
+	void Renderer::recreateSwapChain(){
+		auto extent = renderWindow.getExtent();
+		while (extent.width == 0 || extent.height == 0){
+			extent = renderWindow.getExtent();
+			glfwWaitEvents();
 		}
+
+		vkDeviceWaitIdle(engineDevice.device());
+		if (scandiumSwapchain == nullptr){
+			scandiumSwapchain = nullptr; // I think you can remove this?
+			scandiumSwapchain = std::make_unique<ScandiumSwapchain>(engineDevice, extent);
+		}
+		else{
+			std::shared_ptr<ScandiumSwapchain> oldSwapChain = std::move(scandiumSwapchain);
+			scandiumSwapchain = std::make_unique<ScandiumSwapchain>(engineDevice, extent, std::move(scandiumSwapchain));
+			if(!oldSwapChain->compareSwapFormats(*scandiumSwapchain.get())){
+				throw std::runtime_error("Swap chain image or depth format has changed");
+			}
+		}
+		
+		//TODO: optimization: if render passes are compatible do nothing
+		//TOOD create pipeline
 	}
 
-	void RendererWindow::initWindow(){
-		glfwInit();
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-		window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
-		glfwSetWindowUserPointer(window, this);
-		glfwSetFramebufferSizeCallback(window, framebufferResizecallback);
+	void Renderer::createCommandBuffers() {
+		commandBuffers.resize(ScandiumSwapchain::MAX_FRAMES_IN_FLIGHT);
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandPool = engineDevice.getCommandPool();
+		allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
+
+		if (vkAllocateCommandBuffers(engineDevice.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS){
+			throw std::runtime_error("Failed to allocate command buffers!");
+		}
+
 	}
 
-	void RendererWindow::framebufferResizecallback(GLFWwindow *window, int width, int height){
-		auto rendererWindow = reinterpret_cast<RendererWindow*>(glfwGetWindowUserPointer(window));
-		rendererWindow->framebufferResized = true;
-		rendererWindow->width = width;
-		rendererWindow->height = height;
+	void Renderer::freeCommandBuffers(){
+		vkFreeCommandBuffers(engineDevice.device(), engineDevice.getCommandPool(), 
+			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+		commandBuffers.clear();
+	}
+
+	VkCommandBuffer Renderer::beginFrame(){
+		assert(!isFrameStarted && "Can't call beginFrame while already in progress!");
+		auto result = scandiumSwapchain->acquireNextImage(&currentImageIndex);
+		if (result == VK_ERROR_OUT_OF_DATE_KHR){
+			recreateSwapChain();
+			return nullptr;
+		}
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR){
+			throw std::runtime_error("Failed to acquire swapchain image!");
+		}
+		isFrameStarted = true;
+
+		auto commandBuffer = getCurrentCommandBuffer();
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+		if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS){
+			throw std::runtime_error("Failed to begin recording command buffer!");
+		}
+		return commandBuffer;
+	}
+
+	void Renderer::endFrame(){
+		assert(isFrameStarted && "Can't call endFrame while frame is not in progress");
+		auto commandBuffer = getCurrentCommandBuffer();
+		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+    		throw std::runtime_error("failed to record command buffer!");
+  		}
+
+		auto result = scandiumSwapchain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
+		if (result == VK_ERROR_OUT_OF_DATE_KHR  || result == VK_SUBOPTIMAL_KHR || renderWindow.wasWindowResized()){
+			renderWindow.resetWindowResizedFlag();
+			recreateSwapChain();
+		}
+		else if (result != VK_SUCCESS){
+			throw std::runtime_error("Failed to present swapchain image!");
+		}
+		isFrameStarted = false;
+		currentFrameIndex = (currentFrameIndex + 1) % ScandiumSwapchain::MAX_FRAMES_IN_FLIGHT;
+
+	}
+	
+	void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer){
+		assert(isFrameStarted && "Can't call beginSwapChainRenderPass if frame is not in progress");
+		assert(commandBuffer == getCurrentCommandBuffer() && "Can't begin render pass on command buffer from a different frame");
+
+		VkRenderPassBeginInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = scandiumSwapchain->getRenderPass();
+		renderPassInfo.framebuffer = scandiumSwapchain->getFrameBuffer(currentImageIndex);
+
+		renderPassInfo.renderArea.offset = {0, 0};
+		renderPassInfo.renderArea.extent = scandiumSwapchain->getSwapChainExtent();
+
+		std::array<VkClearValue, 2> clearValues{};
+		clearValues[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
+		clearValues[1].depthStencil = {1.0f, 0};
+		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.pClearValues = clearValues.data();
+
+		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(scandiumSwapchain->getSwapChainExtent().width);
+		viewport.height = static_cast<float>(scandiumSwapchain->getSwapChainExtent().height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		VkRect2D scissor{{0, 0}, scandiumSwapchain->getSwapChainExtent()};
+		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+
+	}
+	void Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer){
+		assert(isFrameStarted && "Can't call endSwapChainRenderPass if frame is not in progress");
+		assert(commandBuffer == getCurrentCommandBuffer() && "Can't end render pass on command buffer from a different frame");
+		vkCmdEndRenderPass(commandBuffer);
 	}
 }

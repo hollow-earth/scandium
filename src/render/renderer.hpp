@@ -1,34 +1,54 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <string>
+#include "engine_device.hpp"
+#include "window.hpp"
+#include "scandium_swapchain.hpp"
+
+#include <cassert>
+#include <memory>
+#include <vector>
 
 namespace scandium{
-	class RendererWindow{
+	
+	class Renderer{
+
 		public:
-			RendererWindow(int w, int h, std::string name);
-			~RendererWindow();
+			Renderer(Window &window, EngineDevice &device);
+			~Renderer();
 
-			RendererWindow(const RendererWindow &) = delete;					// what is this???
-			RendererWindow &operator=(const RendererWindow &) = delete;			// no fucking clue what this does
-			bool wasWindowResized() {return framebufferResized; }
-			void resetWindowResizedFlag() {framebufferResized = false; }
+			Renderer(const Renderer &) = delete;
+			Renderer &operator=(const Renderer &) = delete;
 
-			bool shouldClose() { return glfwWindowShouldClose(window); }
-			VkExtent2D getExtent() {return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
-			void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
+			VkRenderPass getSwapChainRenderPass() const { return scandiumSwapchain->getRenderPass(); }
+			bool isFrameInProgress() const { return isFrameStarted; }
+			
+			VkCommandBuffer getCurrentCommandBuffer() const{
+				assert(isFrameStarted && "Cannot get command buffer when frame not in progress)");
+				return commandBuffers[currentFrameIndex];
+			}
+
+			int getFrameIndex() const{
+				assert(isFrameStarted && "Cannot get frame index when frame not in progress");
+				return currentFrameIndex;
+			}
+
+			VkCommandBuffer beginFrame();
+			void endFrame();
+			void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
+			void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
 
 		private:
-			static void framebufferResizecallback(GLFWwindow *window, int width, int height);
-			int width;
-			int height;
-			bool framebufferResized = false;
-			
-			std::string windowName;
-			GLFWwindow* window;
+			void createCommandBuffers();
+			void freeCommandBuffers();
+			void recreateSwapChain();
 
-			void initWindow();
+			Window& renderWindow;
+			EngineDevice& engineDevice;
+			std::unique_ptr<ScandiumSwapchain> scandiumSwapchain;
+			std::vector<VkCommandBuffer> commandBuffers;
+
+			uint32_t currentImageIndex;
+			int currentFrameIndex{0};
+			bool isFrameStarted;
 	};
-
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderer.hpp"
+#include "window.hpp"
 
 // Stole this code from Brendan Galea/blurrypiano, will have to be rewritten later
 
@@ -32,7 +32,7 @@ namespace scandium {
 	const bool enableValidationLayers = true;
 	#endif
 
-	EngineDevice(RendererWindow &renderWindow);
+	EngineDevice(Window &renderWindow);
 	~EngineDevice();
 
 	// Not copyable or movable
@@ -95,7 +95,7 @@ namespace scandium {
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-	RendererWindow &window;
+	Window &window;
 	VkCommandPool commandPool;
 
 	VkDevice device_;

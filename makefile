@@ -1,22 +1,28 @@
-## C++ specific stuff
+# C++ specific stuff
 CXX = g++
 CFLAGS = 
 OUTPUT =
 
-## Includes
+# Includes
 LIBS = -I"C:\\Coding\\glfw-3.3.7\\include" -I"C:\\Coding\\VulkanSDK1.3.211.0\\Include" -L"C:\\Coding\\VulkanSDK1.3.211.0\\Lib" -L"C:\\Coding\\glfw-3.3.7\\lib-mingw-w64\\"  -lglfw3 -lvulkan-1 -lgdi32 -m64
 GLSC = "C:\\Coding\\VulkanSDK1.3.211.0\\Bin\\glslc.exe"
 
-## Directories
+# Directories
 OBJ_DIR = ./build/obj
 SRC_DIR = ./src
 
-RENDER_DIR = ./src/render
-WORLD_DIR = ./src/world
-
-SOURCES = $(SRC_DIR)/main.cpp $(wildcard $(RENDER_DIR)/*.cpp) $(wildcard $(WORLD_DIR)/*.cpp)
 OBJECTS = $(patsubst %.cpp, %.o, $(SOURCES))
 EXPECTED_OBJECTS =  $(patsubst %.o, $(OBJ_DIR)/%.o, $(notdir $(OBJECTS)))
+
+#######################################################
+### Do not modify anything above this block of text ###
+#######################################################
+SOURCES = $(SRC_DIR)/main.cpp $(wildcard $(RENDER_DIR)/*.cpp) $(wildcard $(WORLD_DIR)/*.cpp) $(wildcard $(GAME_DIR)/*.cpp)
+
+# Code directories
+RENDER_DIR = ./src/render
+WORLD_DIR = ./src/world
+GAME_DIR = = ./src/game
 
 debug: CFLAGS += -g
 debug: OUTPUT = -o ./build/output_debug.exe
@@ -37,4 +43,4 @@ shaders: .PHONY
 	$(GLSC) ./shaders/simple_shader.frag -o ./shaders/simple_shader.frag.spv
 
 #clean:
-#	del /F *.o
+#	del /F ./build/obj/*.o

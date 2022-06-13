@@ -1,10 +1,9 @@
 #pragma once
 
 #include "engine_device.hpp"
-#include "pipeline.hpp"
+#include "window.hpp"
 #include "renderer.hpp"
-#include "scandium_swapchain.hpp"
-#include "scandium_model.hpp"
+#include "../game/gameObject.hpp"
 
 #include <memory>
 #include <vector>
@@ -26,21 +25,11 @@ namespace scandium{
 			void run();
 			
 		private:
-			void loadModels();
-			void createPipelineLayout();
-			void createPipeline();
-			void createCommandBuffers();
-			void freeCommandBuffers();
-			void drawFrame();
-			void recreateSwapChain();
-			void recordCommandBuffer(int imageIndex);
+			void loadGameObjects();
 
-			RendererWindow renderWindow{WIDTH, HEIGHT, "Bruh"};
+			Window renderWindow{WIDTH, HEIGHT, "Bruh"};
 			EngineDevice engineDevice{renderWindow};
-			std::unique_ptr<ScandiumSwapchain> scandiumSwapchain;
-			std::unique_ptr<ScandiumPipeline> scandiumPipeline;
-			VkPipelineLayout pipelineLayout;
-			std::vector<VkCommandBuffer> commandBuffers;
-			std::unique_ptr<ScandiumModel> scandiumModel;
+			Renderer renderer{renderWindow, engineDevice};
+			std::vector<GameObject> gameObjects;
 	};
 }
