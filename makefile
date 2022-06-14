@@ -44,3 +44,4 @@ shaders: .PHONY
 
 clean:
 	del .\build\obj\*.o
+	del .\build\*.exe
