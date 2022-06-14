@@ -80,6 +80,7 @@ namespace scandium
 			std::shared_ptr<ScandiumModel> model{};
 			glm::vec3 color{};
 			
+			//TODO find a way to store color
 			Transform2DComponent Transform2D;
 		
 		private:
