@@ -56,11 +56,10 @@ namespace scandium {
 	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject> &gameObjects){
 		scandiumPipeline->bind(commandBuffer);
 		for (auto &obj: gameObjects){
-			obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
 			SimplePushconstantData push{};
-			push.offset = obj.transform2d.translation;
+			push.offset = obj.Transform2D.position;
 			push.color = obj.color;
-			push.transform = obj.transform2d.mat2();
+			push.transform = obj.Transform2D.transform();
 
 			vkCmdPushConstants(commandBuffer, pipelineLayout, 
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushconstantData), &push);
