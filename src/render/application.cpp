@@ -44,9 +44,12 @@ namespace scandium {
 		auto triangle = GameObject::createGameObject();
 		triangle.model = scandiumModel;
 		triangle.color = {0.1f, 0.8f, 0.1f};
-		triangle.transform2d.translation.x = .2f;
-		triangle.transform2d.scale = {2.f, .5f};
-		triangle.transform2d.rotation = .25f * glm::two_pi<float>();
+		triangle.Transform2D.translate(0.5f, 0.25f);
+		triangle.Transform2D.scale(2.0f, 1.0f);
+		triangle.Transform2D.rotate(0.0f);
+		//triangle.transform2d.translation.x = .2f;
+		//triangle.transform2d.scale = {2.f, .5f};
+		//triangle.transform2d.rotation = .25f * glm::two_pi<float>();
 		gameObjects.push_back(std::move(triangle));
 	}
 }
