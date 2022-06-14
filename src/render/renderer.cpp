@@ -22,12 +22,11 @@ namespace scandium {
 
 		vkDeviceWaitIdle(engineDevice.device());
 		if (scandiumSwapchain == nullptr){
-			scandiumSwapchain = nullptr; // I think you can remove this?
 			scandiumSwapchain = std::make_unique<ScandiumSwapchain>(engineDevice, extent);
 		}
 		else{
 			std::shared_ptr<ScandiumSwapchain> oldSwapChain = std::move(scandiumSwapchain);
-			scandiumSwapchain = std::make_unique<ScandiumSwapchain>(engineDevice, extent, std::move(scandiumSwapchain));
+			scandiumSwapchain = std::make_unique<ScandiumSwapchain>(engineDevice, extent, oldSwapChain);
 			if(!oldSwapChain->compareSwapFormats(*scandiumSwapchain.get())){
 				throw std::runtime_error("Swap chain image or depth format has changed");
 			}
