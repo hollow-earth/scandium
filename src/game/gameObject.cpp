@@ -8,13 +8,19 @@ namespace scandium {
 		rotationMatrix = {{cos, sin}, {-sin, cos}};
 	}
 
-	//TODO add overload for a single unilateral transform
-	//TODO add overloads of this function to manually input matrices for fun
+	//TODO test this, I'm not sure about the semantics
+	void Transform2DComponent::scale(glm::mat2x2 scaleMat){
+		scaleMatrix = std::move(scaleMat);
+	}
+
+	void Transform2DComponent::scale(float scaling){
+		scaleMatrix = {{scaling, 0.0f}, {0.0f, scaling}};
+	}
+
 	void Transform2DComponent::scale(float x_scaling, float y_scaling){
 		scaleMatrix = {{x_scaling, 0.0f}, {0.0f, y_scaling}};
 	}
 
-	//TODO add overloads of this function to manually input matrices for fun
 	void Transform2DComponent::translate(float x_translation, float y_translation){
 		position = {position.x + x_translation, position.y + y_translation};
 	}
@@ -24,5 +30,5 @@ namespace scandium {
 	}
 
 	//TODO implement a flip function that does (x,y) -> (-x,y)
-
+	//void::Transform2DComponent::flip_x()
 }
