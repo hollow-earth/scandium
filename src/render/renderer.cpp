@@ -33,7 +33,6 @@ namespace scandium {
 		}
 		
 		//TODO: optimization: if render passes are compatible do nothing
-		//TOOD create pipeline
 	}
 
 
