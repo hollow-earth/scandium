@@ -12,8 +12,7 @@
 namespace scandium {
 
 	struct SimplePushconstantData{
-		glm::mat2 transform{1.0f};
-		glm::vec2 offset;
+		glm::mat4 transform{1.0f};
 		alignas(16) glm::vec3 color;
 	};
 
@@ -56,8 +55,8 @@ namespace scandium {
 	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject> &gameObjects){
 		scandiumPipeline->bind(commandBuffer);
 		for (auto &obj: gameObjects){
+			obj.Transform2D.rotate(obj.Transform2D.rotation.x + 0.01f, obj.Transform2D.rotation.x + 0.01f, 0.0f);
 			SimplePushconstantData push{};
-			push.offset = obj.Transform2D.position;
 			push.color = obj.color;
 			push.transform = obj.Transform2D.transform();
 
