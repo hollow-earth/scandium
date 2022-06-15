@@ -14,7 +14,7 @@ namespace scandium{
 
 		public:
 			static const int WIDTH = 800;
-			static const int HEIGHT = 600;
+			static const int HEIGHT = 800;
 			
 			Application();
 			~Application();
