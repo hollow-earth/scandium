@@ -5,61 +5,25 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/matrix.hpp>
-
+#include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
 namespace scandium
 {	
 	struct Transform2DComponent{
-		glm::mat2x2 scaleMatrix = {{1.0f, 0.0f},{0.0f, 1.0f}};
-		glm::mat2x2 rotationMatrix = {{1.0f, 0.0f},{0.0f, 1.0f}};
+		glm::vec3 position = {0.0f, 0.0f, 0.0f};
+		glm::vec3 scaling = {1.0f, 1.0f, 1.0f};
+		glm::vec3 rotation = {0.0f, 0.0f, 1.0f};
 
-		/*! @brief Position vector for the GameObject.
-		 *  Keep in mind that Vulkan works with a y-axis pointing downwards.
-		 *  The vector is of form {x, y}
-		 *  @param[in] x x component of the vector
-		 *	@param[in] y y component of the vector, non-standard Cartesian coordinates (pointing downwards)
-		*/
-		glm::vec2 position = {0.0f, 0.0f};
-		
-		/*! @brief Performs GameObject rotation about itself.
-		 * 	This is only done in the XY plane.
-		 *  Keep in mind that Vulkan works with a y-axis pointing downwards.
-		 *  @param[in] theta The angle in radians.
-		*/
-		void rotate(const float theta);
-
-		/*! @brief Performs GameObject scaling.
-		 * 	This is only done in the XY plane.
-		 *  @param[in] x_scaling The x scale factor, float
-		 * 	@param[in] y_scaling The y scale factor, float
-		*/
+		void rotate(const float theta_x, const float theta_y, const float theta_z);
+		void rotate(const float theta_z);
+		void flip_x();
+		void flip_y();
 		void scale(float x_scaling, float y_scaling);
-		
-		/*! @brief Performs GameObject scaling.
-		 * 	This is only done in the XY plane.
-		 *  @param[in] scaling The scale factor, float. Broadcasted on both the x and y axes.
-		*/
 		void scale(float scaling);
-
-		/*! @brief Performs GameObject scaling.
-		 * 	This is only done in the XY plane. 
-		 *  @param[in] scaleMat The scaling matrix of form {{x_scaling, 0.0f},{0.0f, y_scaling}}
-		*/
-		void scale(glm::mat2x2 scaleMat);
-
-		/*! @brief Performs GameObject translation.
-		 * 	This is only done in the XY plane. Keep in mind that Vulkan works with a y-axis pointing downwards.
-		 *  @param[in] x_translation float
-		 *  @param[in] y_translation float
-		*/
+		//void scale(glm::mat2x2 scaleMat);
 		void translate(float x_translation, float y_translation);
-
-		/*! @brief Performs the transform operations.
-		 * 	This is only done in the XY plane. Returns rotation * scaling.
-		 *  @returns glm::mat2x2 
-		*/
-		glm::mat2x2 transform();
+		glm::mat4x4 transform();
 	};
 
 	class GameObject{
