@@ -25,10 +25,10 @@ WORLD_DIR = ./src/world
 GAME_DIR = = ./src/game
 
 debug: CFLAGS += -g
-debug: OUTPUT = -o ./build/output_debug.exe
+debug: OUTPUT = -o ./build/output_debug
 debug: all
 
-build: OUTPUT = -o ./build/output.exe
+build: OUTPUT = -o ./build/output
 build: all
 
 all: $(OBJECTS)
