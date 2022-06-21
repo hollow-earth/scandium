@@ -1,6 +1,7 @@
 #include "scandium_model.hpp"
 
 #include <cassert>
+#include <cstring>
 
 namespace scandium{
 	ScandiumModel::ScandiumModel(EngineDevice &device, const std::vector<Vertex> &vertices) : engineDevice{device} {
