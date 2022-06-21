@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "../render/scandium_model.hpp"
 
 #include <glm/vec2.hpp>
