@@ -20,6 +20,7 @@ namespace scandium{
 			Renderer &operator=(const Renderer &) = delete;
 
 			VkRenderPass getSwapChainRenderPass() const { return scandiumSwapchain->getRenderPass(); }
+			float getAspectRation() const {return scandiumSwapchain->extentAspectRatio();  }
 			bool isFrameInProgress() const { return isFrameStarted; }
 			
 			VkCommandBuffer getCurrentCommandBuffer() const{

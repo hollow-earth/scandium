@@ -1,5 +1,6 @@
 #include "application.hpp"
 #include "render_system.hpp"
+#include "camera.hpp"
 
 #include <array>
 #include <glm/glm.hpp>
@@ -20,13 +21,16 @@ namespace scandium {
 
 	void Application::run(){
 		RenderSystem renderSystem{engineDevice, renderer.getSwapChainRenderPass()};
+		Camera mainCamera{};
 
 		while(!renderWindow.shouldClose()){
 			glfwPollEvents();
-
+			float aspect = renderer.getAspectRation();
+			//mainCamera.setOrthographicProjection(-aspect, aspect, -1, 1,-1, 1); // For 2D
+			mainCamera.setPerspectiveProjection(glm::radians(50.0f), aspect, 0.0f, 10.0f); // For 3D
 			if (auto commandBuffer = renderer.beginFrame()){
 				renderer.beginSwapChainRenderPass(commandBuffer);
-				renderSystem.renderGameObjects(commandBuffer, gameObjects);
+				renderSystem.renderGameObjects(commandBuffer, gameObjects, mainCamera);
 				renderer.endSwapChainRenderPass(commandBuffer);
 				renderer.endFrame();
 			}

@@ -52,13 +52,13 @@ namespace scandium {
 		scandiumPipeline = std::make_unique<ScandiumPipeline>(engineDevice, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv", pipelineConfig);
 	}
 
-	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject> &gameObjects){
+	void RenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<GameObject> &gameObjects, const Camera &camera){
 		scandiumPipeline->bind(commandBuffer);
 		for (auto &obj: gameObjects){
 			obj.Transform2D.rotate(obj.Transform2D.rotation.x + 0.01f, obj.Transform2D.rotation.x + 0.01f, 0.0f);
 			SimplePushconstantData push{};
 			push.color = obj.color;
-			push.transform = obj.Transform2D.transform();
+			push.transform = camera.getProjection() * obj.Transform2D.transform();
 
 			vkCmdPushConstants(commandBuffer, pipelineLayout, 
 				VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushconstantData), &push);

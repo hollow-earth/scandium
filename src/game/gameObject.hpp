@@ -20,6 +20,7 @@ namespace scandium
 		void scale(const float scaling);
 		//void scale(glm::mat2x2 scaleMat);
 		void translate(const float x_translation, const float y_translation, const float z_translation);
+		void translate(const float x_translation, const float y_translation);
 		glm::mat4x4 transform();
 
 		public:
